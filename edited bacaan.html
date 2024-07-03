@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>தமிழ் வாசிப்புப் பயிற்சி</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .topic {
+            margin-bottom: 20px;
+        }
+        .exercise {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            margin: 5px;
+            padding: 5px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>தமிழ் வாசிப்புப் பயிற்சி</h1>
+        
+        <div id="content">
+            <!-- Content will be dynamically loaded here -->
+        </div>
+
+        <div class="navigation">
+            <button onclick="previousTopic()">முந்தைய தலைப்பு</button>
+            <button onclick="nextTopic()">அடுத்த தலைப்பு</button>
+     
+    </div>
+
+    <script>
+        const topics = [
+            {
+                title: "பள்ளிக்கூடம்",
+                content: "என் பள்ளி பெரியது. பள்ளியில் நிறைய வகுப்பறைகள் உள்ளன. நாங்கள் தினமும் காலை 8 மணிக்கு பள்ளிக்குச் செல்கிறோம். பள்ளியில் விளையாட ஒரு பெரிய மைதானம் உள்ளது. எனக்கு என் பள்ளி மிகவும் பிடிக்கும்.",
+                blanks: ["பெரியது", "வகுப்பறைகள்", "8", "மைதானம்", "பிடிக்கும்"]
+            },
+            {
+                title: "என் நண்பன்",
+                content: "என் நண்பனின் பெயர் ராமு. அவன் என்னுடன் விளையாடுவான். ராமு மிகவும் நல்லவன். நாங்கள் ஒன்றாகப் படிப்போம். ராமு எனக்கு மிகவும் பிடித்த நண்பன்.",
+                blanks: ["ராமு", "விளையாடுவான்", "நல்லவன்", "படிப்போம்", "பிடித்த"]
+            },
+            {
+                title: "எனது வீடு",
+                content: "எனது வீடு சிறியது. வீட்டில் இரண்டு அறைகள் உள்ளன. வீட்டின் முன் ஒரு தோட்டம் உள்ளது. நாங்கள் வீட்டில் மகிழ்ச்சியாக இருக்கிறோம். எனக்கு என் வீடு மிகவும் பிடிக்கும்.",
+                blanks: ["சிறியது", "இரண்டு", "தோட்டம்", "மகிழ்ச்சியாக", "பிடிக்கும்"]
+            },
+            {
+                title: "எனது குடும்பம்",
+                content: "எனது குடும்பத்தில் நான்கு பேர் உள்ளனர். அப்பா, அம்மா, அண்ணன், நான். நாங்கள் அனைவரும் ஒன்றாகப் சாப்பிடுவோம். எனது அம்மா நன்றாகச் சமைப்பார். எனக்கு என் குடும்பம் மிகவும் பிடிக்கும்.",
+                blanks: ["நான்கு", "அண்ணன்", "சாப்பிடுவோம்", "சமைப்பார்", "பிடிக்கும்"]
+            },
+            {
+                title: "எனக்குப் பிடித்த விளையாட்டு",
+                content: "எனக்கு கிரிக்கெட் விளையாடப் பிடிக்கும். நான் மட்டை பிடிப்பதில் கெட்டிக்காரன். என் நண்பர்களுடன் மாலையில் விளையாடுவேன். கிரிக்கெட் விளையாடும்போது நான் மகிழ்ச்சியாக இருப்பேன். நான் ஒரு நல்ல கிரிக்கெட் வீரனாக வர விரும்புகிறேன்.",
+                blanks: ["கிரிக்கெட்", "கெட்டிக்காரன்", "மாலையில்", "மகிழ்ச்சியாக", "வீரனாக"]
+            },
+            {
+                title: "எனக்குப் பிடித்த ஆசிரியர்",
+                content: "எனது தமிழ் ஆசிரியர் பெயர் மலர். அவர் மிகவும் அன்பாக இருப்பார். மலர் ஆசிரியர் நன்றாகப் பாடம் கற்பிப்பார். அவர் எங்களுக்குக் கதைகள் சொல்வார். எனக்கு மலர் ஆசிரியர் மீது மிகுந்த மரியாதை உண்டு.",
+                blanks: ["மலர்", "அன்பாக", "கற்பிப்பார்", "கதைகள்", "மரியாதை"]
+            },
+            {
+                title: "எனக்குப் பிடித்த பருவம்",
+                content: "எனக்கு மழைக்காலம் மிகவும் பிடிக்கும். மழை பெய்யும்போது நான் மகிழ்ச்சியடைவேன். மழையில் நனைவது எனக்குப் பிடிக்கும். மழைக்காலத்தில் எங்கும் பசுமையாக காணப்படும். நான் மழைக்காலத்தில் காகிதக் கப்பல் விடுவேன்.",
+                blanks: ["மழைக்காலம்", "மகிழ்ச்சியடைவேன்", "நனைவது", "பசுமையாக", "காகிதக்"]
+            },
+            {
+                title: "எனது அன்றாட வாழ்க்கை",
+                content: "நான் காலையில் 6 மணிக்கு எழுவேன். பல் துலக்கி, குளித்துத் தயாராவேன். காலை உணவு சாப்பிட்டுப் பள்ளிக்குச் செல்வேன். மாலையில் வீட்டுப்பாடம் செய்வேன். இரவு 9 மணிக்கு உறங்கச் செல்வேன்.",
+                blanks: ["6", "குளித்துத்", "உணவு", "வீட்டுப்பாடம்", "9"]
+            },
+            {
+                title: "எனது கனவு",
+                content: "நான் பெரியவன் ஆனது மருத்துவர் ஆக வேண்டும். நோயாளிகளுக்கு உதவ வேண்டும். நன்றாகப் படித்து முதல் மதிப்பெண் பெற வேண்டும். என் பெற்றோருக்குப் பெருமை சேர்க்க வேண்டும். நல்ல மனிதனாக வாழ வேண்டும்.",
+                blanks: ["மருத்துவர்", "நோயாளிகளுக்கு", "முதல்", "பெருமை", "நல்ல"]
+            },
+            {
+                title: "எனக்குப் பிடித்த விலங்கு",
+                content: "எனக்கு யானை மிகவும் பிடிக்கும். யானை மிகப் பெரிய விலங்கு. யானைக்கு நீண்ட துதிக்கை உண்டு. யானை மிகவும் புத்திசாலி. வனவிலங்குச் சாலையில் யானையைப் பார்ப்பேன்.",
+                blanks: ["யானை", "பெரிய", "துதிக்கை", "புத்திசாலி", "வனவிலங்குச்"]
+            }
+        ];
+
+        let currentTopic = 0;
+        let scores = new Array(topics.length).fill(0);
+
+        function loadTopic(index) {
+            const topic = topics[index];
+            let content = `
+                <div class="topic">
+                    <h2>${index + 1}. ${topic.title}</h2>
+                    <p>${topic.content}</p>
+                </div>
+                <div class="exercise">
+                    <h2>பயிற்சி: கோடிட்ட இடங்களை நிரப்புக</h2>
+            `;
+
+            const sentences = topic.content.split('.');
+            for (let i = 0; i < 5; i++) {
+                content += `<p>${i + 1}. ${sentences[i].replace(topic.blanks[i], `<input type="text" id="ans${i}">`)}</p>`;
+            }
+
+            content += `
+                    <button onclick="checkAnswers()">சரிபார்க்கவும்</button>
+                </div>
+                <div id="result"></div>
+            `;
+
+            document.getElementById('content').innerHTML = content;
+        }
+
+        function checkAnswers() {
+            const topic = topics[currentTopic];
+            let score = 0;
+            let feedback = '';
+
+            for (let i = 0; i < 5; i++) {
+                const userAnswer = document.getElementById('ans' + i).value.trim();
+                if (userAnswer.toLowerCase() === topic.blanks[i].toLowerCase()) {
+                    score++;
+                    feedback += `${i + 1}வது பதில் சரி!<br>`;
+                } else {
+                    feedback += `${i + 1}வது பதில் தவறு. சரியான பதில்: ${topic.blanks[i]}<br>`;
+                }
+            }
+
+            scores[currentTopic] = score;
+            feedback += `<br>உங்கள் மதிப்பெண்: ${score}/5`;
+            document.getElementById('result').innerHTML = feedback;
+        }
+
+        function nextTopic() {
+            currentTopic = (currentTopic + 1) % topics.length;
+            loadTopic(currentTopic);
+        }
+
+        function previousTopic() {
+            currentTopic = (currentTopic - 1 + topics.length) % topics.length;
+            loadTopic(currentTopic);
+        }
+
+       
+
+        // Load the first topic when the page loads
+        loadTopic(currentTopic);
+    </script>
+</body>
+</html>
