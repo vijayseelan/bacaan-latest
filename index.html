@@ -53,11 +53,39 @@
             justify-content: space-between;
             margin-top: 20px;
         }
+        .toc {
+            margin-bottom: 20px;
+        }
+        .toc a {
+            display: block;
+            padding: 5px 0;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .progress {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .motivational {
+            margin-top: 20px;
+            font-style: italic;
+            color: #777;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>தமிழ் தொடர் வாசிப்புப் பயிற்சி</h1>
+        <h1>தமிழ் வாசிப்புப் பயிற்சி</h1>
+        <div class="toc">
+            <h2>உள்ளடக்கம்</h2>
+            <div id="toc-list">
+                <!-- Table of contents will be dynamically loaded here -->
+            </div>
+        </div>
         
         <div id="content">
             <!-- Content will be dynamically loaded here -->
@@ -66,7 +94,14 @@
         <div class="navigation">
             <button onclick="previousTopic()">முந்தைய தலைப்பு</button>
             <button onclick="nextTopic()">அடுத்த தலைப்பு</button>
-     
+        </div>
+        
+        <div class="progress" id="progress"></div>
+
+        <div class="motivational">
+            <p id="quote">"வாசிப்பு அறிவின் உணவு.”</p>
+        </div>
+
     </div>
 
     <script>
@@ -138,7 +173,7 @@
             `;
 
             const sentences = topic.content.split('.');
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < topic.blanks.length; i++) {
                 content += `<p>${i + 1}. ${sentences[i].replace(topic.blanks[i], `<input type="text" id="ans${i}">`)}</p>`;
             }
 
@@ -149,6 +184,7 @@
             `;
 
             document.getElementById('content').innerHTML = content;
+            updateProgress();
         }
 
         function checkAnswers() {
@@ -156,19 +192,25 @@
             let score = 0;
             let feedback = '';
 
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < topic.blanks.length; i++) {
                 const userAnswer = document.getElementById('ans' + i).value.trim();
                 if (userAnswer.toLowerCase() === topic.blanks[i].toLowerCase()) {
                     score++;
                     feedback += `${i + 1}வது பதில் சரி!<br>`;
+                    playSound('correct');
                 } else {
                     feedback += `${i + 1}வது பதில் தவறு. சரியான பதில்: ${topic.blanks[i]}<br>`;
+                    playSound('incorrect');
                 }
             }
 
             scores[currentTopic] = score;
-            feedback += `<br>உங்கள் மதிப்பெண்: ${score}/5`;
+            feedback += `<br>உங்கள் மதிப்பெண்: ${score}/${topic.blanks.length}`;
+            if (score === topic.blanks.length) {
+                feedback += `<br>அற்புதம்! அனைத்துப் பதிலும் சரியாக உள்ளன.`;
+            }
             document.getElementById('result').innerHTML = feedback;
+            updateProgress();
         }
 
         function nextTopic() {
@@ -181,10 +223,29 @@
             loadTopic(currentTopic);
         }
 
-       
+        function updateProgress() {
+            let totalScore = scores.reduce((a, b) => a + b, 0);
+            let totalBlanks = topics.reduce((sum, topic) => sum + topic.blanks.length, 0);
+            let progress = `மொத்த மதிப்பெண்: ${totalScore}/${totalBlanks}`;
+            document.getElementById('progress').innerText = progress;
+        }
+
+        function playSound(type) {
+            let sound = new Audio(type === 'correct' ? 'correct.mp3' : 'incorrect.mp3');
+            sound.play();
+        }
+
+        function generateTOC() {
+            let tocList = '';
+            topics.forEach((topic, index) => {
+                tocList += `<a href="javascript:loadTopic(${index})">${index + 1}. ${topic.title}</a>`;
+            });
+            document.getElementById('toc-list').innerHTML = tocList;
+        }
 
         // Load the first topic when the page loads
         loadTopic(currentTopic);
+        generateTOC();
     </script>
 </body>
 </html>
